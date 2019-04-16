@@ -31,29 +31,29 @@ def read_json(name):
 
 @app.route("/buynode/", methods=["GET", "POST"])
 def dataCome():
-    data_show = read_json(home + "/static/json/inside.json")
+    data_show = read_json(home + "/CraneDemo/Server/static/json/inside.json")
     data_show[0] += 1
-    write_json(data_show, home + "/static/json/inside.json")
+    write_json(data_show, home + "/CraneDemo/Server/static/json/inside.json")
     ts = time.time()*1000
     data2write = [ts, 1]
-    data_old = read_json(home + "/static/json/data.json")
+    data_old = read_json(home + "/CraneDemo/Server/static/json/data.json")
     data_old.append(data2write)
-    write_json(data_old, home + "/static/json/data.json")
+    write_json(data_old, home + "/CraneDemo/Server/static/json/data.json")
     return "200"
 
 
 @app.route("/", methods=["GET", "POST"])
 def data():
-    data_show = read_json(home + "/static/json/inside.json")
+    data_show = read_json(home + "/CraneDemo/Server/static/json/inside.json")
     data_show[1] += 1
-    write_json(data_show, home + "/static/json/inside.json")
+    write_json(data_show, home + "/CraneDemo/Server/static/json/inside.json")
 
     enters = data_show[1]
     craneNUM = data_show[0]
 
 
     print("Trying to read json")
-    data = read_json(home + "/static/json/data.json")
+    data = read_json(home + "/CraneDemo/Server/static/json/data.json")
     for i in tqdm(range(len(data) - 1)):
         x = (data[i+1][0]/1000) - (data[i][0]/1000)
         if x>600:
@@ -67,7 +67,7 @@ def data():
                 change = ((data[i][0]/1000) + dif*60)
 
     data = sorted(data, key=lambda x: x[0])
-    write_json(data, home + "/static/json/data.json")
+    write_json(data, home + "/CraneDemo/Server/static/json/data.json")
     return render_template("index.html", **locals())
 
 
