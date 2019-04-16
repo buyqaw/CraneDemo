@@ -1,0 +1,17 @@
+{
+  "name": "BuyQawProx",
+  "short_name": "BuyQaw",
+  "description": "BuyQaw DEMO for Crane",
+  "theme_color": "transparent",
+  "background_color": "transparent",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "images/icons/icon.png",
+      "type": "image/png"
+    }
+  ]
+}
