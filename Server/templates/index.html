@@ -19,89 +19,130 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script>
-  $.getJSON(
-  window.location + 'static/json/data.json?' + new Date().getTime(),
-  function (data) {
-    Highcharts.setOptions({
-        lang: {
-            loading: 'Загрузка...',
-            months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-            weekdays: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-            shortMonths: ['Янв', 'Фев', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
-            exportButtonTitle: "Экспорт",
-            printButtonTitle: "Печать",
-            rangeSelectorFrom: "С",
-            rangeSelectorTo: "По",
-            rangeSelectorZoom: "Период",
-            downloadPNG: 'Скачать PNG',
-            downloadJPEG: 'Скачать JPEG',
-            downloadPDF: 'Скачать PDF',
-            downloadSVG: 'Скачать SVG',
-            printChart: 'Напечатать график'
-        }
-    });
-    Highcharts.setOptions({
-        global: {
-            useUTC: false
-        }
-      });
-      Highcharts.chart('container', {
-          chart: {
-              zoomType: 'x'
-          },
-          title: {
-              text: 'Работа крановщика по минутам'
-          },
-          subtitle: {
-              text: document.ontouchstart === undefined ?
-                  'Кликните и выберите период' : 'Выберите время'
-          },
-          xAxis: {
-              type: 'datetime'
-          },
-          yAxis: {
-              title: {
-                  text: 'Присуствие'
-              }
-          },
-          legend: {
-              enabled: false
-          },
-          plotOptions: {
-              area: {
-                  fillColor: {
-                      linearGradient: {
-                          x1: 0,
-                          y1: 0,
-                          x2: 0,
-                          y2: 1
-                      },
-                      stops: [
-                          [0, Highcharts.getOptions().colors[0]],
-                          [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                      ]
-                  },
-                  marker: {
-                      radius: 2
-                  },
-                  lineWidth: 1,
-                  states: {
-                      hover: {
-                          lineWidth: 1
-                      }
-                  },
-                  threshold: null
-              }
-          },
+  var data1, data2;
+$.when(
+  $.getJSON(window.location + 'static/json/data.json?' + new Date().getTime(), function(dat) {
+    data1 = dat;
+  }),
+  $.getJSON(window.location + 'static/json/data1.json?' + new Date().getTime(), function(da) {
+    data2 = da;
+  })
+).then(function(data1, data2) {
+  Highcharts.setOptions({
+    lang: {
+      loading: 'Загрузка...',
+      months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+      weekdays: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+      shortMonths: ['Янв', 'Фев', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек'],
+      exportButtonTitle: "Экспорт",
+      printButtonTitle: "Печать",
+      rangeSelectorFrom: "С",
+      rangeSelectorTo: "По",
+      rangeSelectorZoom: "Период",
+      downloadPNG: 'Скачать PNG',
+      downloadJPEG: 'Скачать JPEG',
+      downloadPDF: 'Скачать PDF',
+      downloadSVG: 'Скачать SVG',
+      printChart: 'Напечатать график'
+    }
+  });
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
+    }
+  });
+  Highcharts.chart('container', {
+    chart: {
 
-          series: [{
-              type: 'area',
-              name: 'Сотрудников на кране',
-              data: data
-          }]
-      });
-  }
-);
+      zoomType: 'x'
+    },
+    title: {
+      text: 'Расположение крановщиков',
+      align: 'center'
+    },
+    subtitle: {
+      text: 'Чтобы увеличить - выберите область',
+      align: 'left'
+    },
+    xAxis: {
+      type: 'datetime',
+      labels: {
+        overflow: 'justify'
+      }
+    },
+    yAxis: {
+      title: {
+        text: 'Расположение'
+      },
+      minorGridLineWidth: 0,
+      gridLineWidth: 0,
+      alternateGridColor: null,
+      plotBands: [{ // Light air
+          from: -0.5,
+          to: 0.5,
+          color: '#ffe6e6',
+          label: {
+            text: 'Нет на месте',
+            style: {
+              color: '#000000'
+            }
+          }
+        },
+        { // Light air
+          from: 0.5,
+          to: 1.5,
+          color: '#ecffe6',
+          label: {
+            text: 'Первый кран',
+            style: {
+              color: '#000000'
+            }
+          }
+        }, { // Light breeze
+          from: 1.5,
+          to: 2.5,
+          color: '#e6e6ff',
+          label: {
+            text: 'Второй кран',
+            style: {
+              color: '#000000'
+            }
+          }
+        }
+      ]
+    },
+    tooltip: {
+      valueSuffix: ' кран'
+    },
+    plotOptions: {
+      spline: {
+        lineWidth: 1,
+        states: {
+          hover: {
+            lineWidth: 1
+          }
+        },
+        marker: {
+          enabled: false
+        }
+      }
+    },
+    series: [{
+      name: 'Первый крановщик',
+      data: data1[0],
+      color: "#000099"
+    }, {
+      name: 'Второй крановщик',
+      data: data2[0],
+      color: "#663300"
+    }],
+    navigation: {
+      menuItemStyle: {
+        fontSize: '10px'
+      }
+    }
+  });
+});
 </script>
 <body class="w3-light-grey">
 <!-- !PAGE CONTENT! -->

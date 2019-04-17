@@ -1,101 +1,88 @@
-#include "BLEDevice.h"
-#include "Arduino.h"
-#include "Wire.h"               // Library to use I2C to display
+#include <Arduino.h>            // Standard Arduino library
+#include <Wire.h>               // Library to use I2C to display
 #include "SSD1306Wire.h"        // Display library
-#include "font.h"
-#include "FS.h"
-#include "SPIFFS.h"
-#include "WiFi.h"
-#include "ESPAsyncWebServer.h"
+#include <BLEDevice.h>          // Library to create BLE device
+#include <BLEServer.h>          // Library to create BLE server
+#include <BLEUtils.h>           // Library to communicate in BLE
+#include <BLEScan.h>            // Library to scan BLE devices
+#include <BLEAdvertisedDevice.h>// Library to advertize BLE
+#include <WiFi.h>               // Library to use WiFi
+#include <HTTPClient.h>         // Library to GET/POST in HTTP
+#include <BLE2902.h>            // Characteristics of standard BLE device
+#include <painlessMesh.h>       // Mesh network based on Wi-Fi
+#include "IPAddress.h"
+#include <AsyncTCP.h>
 
 
-/* You only need to format SPIFFS the first time you run a
-   test or else use the SPIFFS plugin to create a partition
-   https://github.com/me-no-dev/arduino-esp32fs-plugin */
-#define FORMAT_SPIFFS_IF_FAILED true
+// Display and Scan activities
+SSD1306Wire  display(0x3c, 5, 4);
+BLEScan* pBLEScan = NULL;
+const char* ssid     = "BuyQaw.TECH";
+const char* password = "YouWillNeverWorkAlone";
 
-void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
-    Serial.printf("Listing directory: %s\r\n", dirname);
+String msg = "0";
 
-    File root = fs.open(dirname);
-    if(!root){
-        Serial.println("- failed to open directory");
-        return;
-    }
-    if(!root.isDirectory()){
-        Serial.println(" - not a directory");
-        return;
-    }
+Scheduler     userScheduler; // to control your personal task
+String name = "1";
 
-    File file = root.openNextFile();
-    while(file){
-        if(file.isDirectory()){
-            Serial.print("  DIR : ");
-            Serial.println(file.name());
-            if(levels){
-                listDir(fs, file.name(), levels -1);
-            }
-        } else {
-            Serial.print("  FILE: ");
-            Serial.print(file.name());
-            Serial.print("\tSIZE: ");
-            Serial.println(file.size());
-        }
-        file = root.openNextFile();
-    }
+bool calc_delay = false;
+
+int scanTime = 5;
+
+void send_signal(String msg){
+  HTTPClient http;
+  http.begin("http://35.204.205.60:7777/buynode/" + msg + name); //Specify destination for HTTP request
+  http.addHeader("Content-Type", "text/plain"); //Specify content-type header
+  int httpResponseCode = http.GET(); //Send the actual POST request
+  http.end(); //Free resources
+  ESP.restart();
 }
 
-void readFile(fs::FS &fs, const char * path){
-    Serial.printf("Reading file: %s\r\n", path);
-
-    File file = fs.open(path);
-    if(!file || file.isDirectory()){
-        Serial.println("- failed to open file for reading");
-        return;
-    }
-
-    Serial.println("- read from file:");
-    while(file.available()){
-        Serial.write(file.read());
-    }
+void scanBLE(){
+  BLEScanResults foundDevices = pBLEScan->start(scanTime);
+  pBLEScan->setActiveScan(true);
+  int count = foundDevices.getCount(); // Define number of found devices
+  for (int i = 0; i < count; i++)
+  {
+    BLEAdvertisedDevice d = foundDevices.getDevice(i); // Define found device
+      String mac = d.getAddress().toString()[17]
+  }
+  msg = mac;
 }
 
-void appendFile(fs::FS &fs, const char * path, const char * message){
-    Serial.printf("Appending to file: %s\r\n", path);
 
-    File file = fs.open(path, FILE_APPEND);
-    if(!file){
-        Serial.println("- failed to open file for appending");
-        return;
-    }
-    if(file.print(message)){
-        Serial.println("- message appended");
-    } else {
-        Serial.println("- append failed");
-    }
+void showit(String text){
+  display.clear();
+  // display.flipScreenVertically();
+  display.setFont(ArialMT_Plain_24);
+    // clear the display
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.drawString(10, 20, text);
+  display.display();
 }
 
-void setup(){
-    Serial.begin(115200);
-    if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
-        Serial.println("SPIFFS Mount Failed");
-        return;
-    }
-    listDir(SPIFFS, "/", 0);
-    // appendFile(SPIFFS, "/log.txt", "World!\r\n");
-    // readFile(SPIFFS, "/log.txt");
-    // Serial.println( "Test complete" );
+void setup() {
+  Serial.begin(115200);
 
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-      request->send(SPIFFS, "/log.txt", String(), false, processor);
-    });
+  display.init();
+  showit("BUYQAW");
 
-    server.on("/log.txt", HTTP_GET, [](AsyncWebServerRequest *request){
-      request->send(SPIFFS, "/log.txt", String(), false, processor);
-    });
+  BLEDevice::init("Node"); // Initialize BLE device
+  pBLEScan = BLEDevice::getScan(); //create new scan
+  pBLEScan->setActiveScan(true);
 
+  scanBLE();
+
+  WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+      }
+
+  showit("JYBERU");
+  if(msg == "0"){ESP.restart()}
+  send_signal(msg);
 }
 
-void loop(){
-
+void loop() {
 }
