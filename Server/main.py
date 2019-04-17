@@ -15,9 +15,6 @@ from tqdm import tqdm
 from pathlib import Path
 
 
-kran11 = ''
-kran12 = ''
-
 app = Flask(__name__)  # Creating new flask app
 home = str(Path.home())
 
@@ -34,8 +31,8 @@ def read_json(name):
 def whois():
     data1 = read_json("./static/json/data.json")
     data2 = read_json("./static/json/data.json")
-    kran1 = ""
-    kran2 = ""
+    kran11 = ""
+    kran12 = ""
     if data1[-1][1] == 1:
         kran11 = "Крановщик 1\n"
     elif data1[-1][1] == 2:
@@ -44,6 +41,8 @@ def whois():
         kran11 = "Крановщик 2"
     elif data2[-1][1] == 2:
         kran12 = "Крановщик 2"
+    return kran11, kran12
+    print(kran11 + kran12)
 
 
 def zeros(path):
@@ -105,11 +104,9 @@ def data():
     zeros("./static/json/data.json")
     zeros("./static/json/data1.json")
     try:
-        whois()
+        kran1, kran2 = whois()
     except:
         print("No one in kran")
-    kran1 = kran11
-    kran2 = kran12
 
     return render_template("index.html", **locals())
 
