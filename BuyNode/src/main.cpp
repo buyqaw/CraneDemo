@@ -9,9 +9,6 @@
 #include <WiFi.h>               // Library to use WiFi
 #include <HTTPClient.h>         // Library to GET/POST in HTTP
 #include <BLE2902.h>            // Characteristics of standard BLE device
-#include <painlessMesh.h>       // Mesh network based on Wi-Fi
-#include "IPAddress.h"
-#include <AsyncTCP.h>
 
 
 // Display and Scan activities
@@ -22,32 +19,56 @@ const char* password = "YouWillNeverWorkAlone";
 
 String msg = "0";
 
-Scheduler     userScheduler; // to control your personal task
 String name = "1";
-
-bool calc_delay = false;
 
 int scanTime = 5;
 
-void send_signal(String msg){
+
+class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
+    void onResult(BLEAdvertisedDevice advertisedDevice) {
+      Serial.printf("Advertised Device: %s \n", advertisedDevice.toString().c_str());
+    }
+};
+
+
+void send_signal(String msg1){
   HTTPClient http;
-  http.begin("http://35.204.205.60:7777/buynode/" + msg + name); //Specify destination for HTTP request
+  Serial.print("Requset is: ");
+  Serial.println("http://35.204.205.60:7777/buynode/" + msg1 + name);
+  http.begin("http://35.204.205.60:7777/buynode/" + msg1 + name); //Specify destination for HTTP request
   http.addHeader("Content-Type", "text/plain"); //Specify content-type header
   int httpResponseCode = http.GET(); //Send the actual POST request
+  Serial.print("Responce is: ");
+  Serial.println(httpResponseCode);
   http.end(); //Free resources
-  ESP.restart();
 }
 
 void scanBLE(){
   BLEScanResults foundDevices = pBLEScan->start(scanTime);
   pBLEScan->setActiveScan(true);
   int count = foundDevices.getCount(); // Define number of found devices
+  WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+      }
   for (int i = 0; i < count; i++)
   {
     BLEAdvertisedDevice d = foundDevices.getDevice(i); // Define found device
-      String mac = d.getAddress().toString()[17]
+      Serial.printf("Address is: %s \n", d.getAddress().toString().c_str());
+      char mac2[18] = "24:0a:64:43:77:df";
+      for (int b = 0; b < 17; b++){
+        mac2[b] = d.getAddress().toString()[b];
+      }
+      String UUID = String(mac2);
+      if(UUID == "12:3b:6a:1b:50:b6" || UUID == "12:3b:6a:1b:4f:74"){
+        Serial.println("Found our!");
+        msg = String(mac2[16]);
+        Serial.print("MAC is: ");
+        Serial.println(msg);
+        send_signal(msg);
+      }
   }
-  msg = mac;
 }
 
 
@@ -65,23 +86,14 @@ void setup() {
   Serial.begin(115200);
 
   display.init();
-  showit("BUYQAW");
+  showit("KRAN 1");
 
   BLEDevice::init("Node"); // Initialize BLE device
   pBLEScan = BLEDevice::getScan(); //create new scan
+  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
   pBLEScan->setActiveScan(true);
-
   scanBLE();
-
-  WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-      }
-
-  showit("JYBERU");
-  if(msg == "0"){ESP.restart()}
-  send_signal(msg);
+  ESP.restart();
 }
 
 void loop() {
