@@ -28,7 +28,7 @@ def read_json(name):
         print("File read")
         return json.load(f)
 
-def zeros(path="/home/naboo/CreaneDemo/Server/static/json/data.json"):
+def zeros(path="/home/naboo/CraneDemo/Server/static/json/data.json"):
     print("Trying to read json")
     data = read_json(path)
     for i in tqdm(range(len(data) - 1)):
@@ -49,36 +49,36 @@ def zeros(path="/home/naboo/CreaneDemo/Server/static/json/data.json"):
 @app.route("/buynode/<mac>", methods=["GET", "POST"])
 def dataCome(mac):
 
-    data_show = read_json("/home/naboo/CreaneDemo/Server/static/json/inside.json")
+    data_show = read_json("/home/naboo/CraneDemo/Server/static/json/inside.json")
     data_show[0] += 1
-    write_json(data_show, "/home/naboo/CreaneDemo/Server/static/json/inside.json")
+    write_json(data_show, "/home/naboo/CraneDemo/Server/static/json/inside.json")
 
     if mac[0] == "4":
         ts = time.time()*1000
         data2write = [ts, mac[1]]
-        data_old = read_json("/home/naboo/CreaneDemo/Server/static/json/data.json")
+        data_old = read_json("/home/naboo/CraneDemo/Server/static/json/data.json")
         data_old.append(data2write)
-        write_json(data_old, "/home/naboo/CreaneDemo/Server/static/json/data.json")
+        write_json(data_old, "/home/naboo/CraneDemo/Server/static/json/data.json")
     else:
         ts = time.time()*1000
         data2write = [ts, mac[1]]
-        data_old = read_json("/home/naboo/CreaneDemo/Server/static/json/data1.json")
+        data_old = read_json("/home/naboo/CraneDemo/Server/static/json/data1.json")
         data_old.append(data2write)
-        write_json(data_old, "/home/naboo/CreaneDemo/Server/static/json/data1.json")
+        write_json(data_old, "/home/naboo/CraneDemo/Server/static/json/data1.json")
     return "200"
 
 
 @app.route("/", methods=["GET", "POST"])
 def data():
-    data_show = read_json("/home/naboo/CreaneDemo/Server/static/json/inside.json")
+    data_show = read_json("/home/naboo/CraneDemo/Server/static/json/inside.json")
     data_show[1] += 1
-    write_json(data_show, "/home/naboo/CreaneDemo/Server/static/json/inside.json")
+    write_json(data_show, "/home/naboo/CraneDemo/Server/static/json/inside.json")
 
     enters = data_show[1]
     craneNUM = data_show[0]
 
-    zeros("/home/naboo/CreaneDemo/Server/static/json/data.json")
-    zeros("/home/naboo/CreaneDemo/Server/static/json/data1.json")
+    zeros("/home/naboo/CraneDemo/Server/static/json/data.json")
+    zeros("/home/naboo/CraneDemo/Server/static/json/data1.json")
 
     return render_template("index.html", **locals())
 
