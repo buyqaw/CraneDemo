@@ -15,6 +15,9 @@ from tqdm import tqdm
 from pathlib import Path
 
 
+kran11 = ''
+kran12 = ''
+
 app = Flask(__name__)  # Creating new flask app
 home = str(Path.home())
 
@@ -28,12 +31,32 @@ def read_json(name):
         print("File read")
         return json.load(f)
 
-def zeros(path="/home/naboo/CraneDemo/Server/static/json/data.json"):
+def whois():
+    data1 = read_json("./static/json/data.json")
+    data2 = read_json("./static/json/data.json")
+    kran1 = ""
+    kran2 = ""
+    if data1[-1][1] == 1:
+        kran11 = "Крановщик 1\n"
+    elif data1[-1][1] == 2:
+        kran12 = "Крановщик 1\n"
+    if data2[-1][1] == 1:
+        kran11 = "Крановщик 2"
+    elif data2[-1][1] == 2:
+        kran12 = "Крановщик 2"
+
+
+def zeros(path):
     print("Trying to read json")
     data = read_json(path)
+
+    if time.time()*1000 - data[-1][0] > 60:
+        data.append([time.time()*1000, 0])
+
     for i in tqdm(range(len(data) - 1)):
         x = (data[i+1][0]/1000) - (data[i][0]/1000)
         if x>60:
+            print("SMB not in work")
             dif = 1
             change = ((data[i][0]/1000) + dif*60)
             while True:
@@ -48,37 +71,39 @@ def zeros(path="/home/naboo/CraneDemo/Server/static/json/data.json"):
 
 @app.route("/buynode/<mac>", methods=["GET", "POST"])
 def dataCome(mac):
-
-    data_show = read_json("/home/naboo/CraneDemo/Server/static/json/inside.json")
+    data_show = read_json("./static/json/inside.json")
     data_show[0] += 1
-    write_json(data_show, "/home/naboo/CraneDemo/Server/static/json/inside.json")
+    write_json(data_show, "./static/json/inside.json")
 
     if mac[0] == "4":
         ts = time.time()*1000
         data2write = [ts, int(mac[1])]
-        data_old = read_json("/home/naboo/CraneDemo/Server/static/json/data.json")
+        data_old = read_json("./static/json/data.json")
         data_old.append(data2write)
-        write_json(data_old, "/home/naboo/CraneDemo/Server/static/json/data.json")
+        write_json(data_old, "./static/json/data.json")
     else:
         ts = time.time()*1000
         data2write = [ts, int(mac[1])]
-        data_old = read_json("/home/naboo/CraneDemo/Server/static/json/data1.json")
+        data_old = read_json("./static/json/data1.json")
         data_old.append(data2write)
-        write_json(data_old, "/home/naboo/CraneDemo/Server/static/json/data1.json")
+        write_json(data_old, "./static/json/data1.json")
     return "200"
 
 
 @app.route("/", methods=["GET", "POST"])
 def data():
-    data_show = read_json("/home/naboo/CraneDemo/Server/static/json/inside.json")
+    data_show = read_json("./static/json/inside.json")
     data_show[1] += 1
-    write_json(data_show, "/home/naboo/CraneDemo/Server/static/json/inside.json")
+    write_json(data_show, "./static/json/inside.json")
 
     enters = data_show[1]
     craneNUM = data_show[0]
 
-    zeros("/home/naboo/CraneDemo/Server/static/json/data.json")
-    zeros("/home/naboo/CraneDemo/Server/static/json/data1.json")
+    zeros("./static/json/data.json")
+    zeros("./static/json/data1.json")
+
+    kran1 = kran11
+    kran2 = kran12
 
     return render_template("index.html", **locals())
 
