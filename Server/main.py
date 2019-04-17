@@ -51,7 +51,7 @@ def zeros(path):
     data = read_json(path)
 
     try:
-        if time.time()*1000 - data[-1][0] > 60:
+        if time.time()*1000 - data[-1][0] > 60000:
             data.append([time.time()*1000, 0])
     except:
         print("First one")
