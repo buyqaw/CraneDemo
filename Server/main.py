@@ -36,9 +36,9 @@ def whois():
     if data1[-1][1] == 1:
         kran11 = "Крановщик 1\n"
     elif data1[-1][1] == 2:
-        kran12 = "Крановщик 1\n"
+        kran12 = "Крановщик 2\n"
     if data2[-1][1] == 1:
-        kran11 = "Крановщик 2"
+        kran11 = "Крановщик 1"
     elif data2[-1][1] == 2:
         kran12 = "Крановщик 2"
     return kran11, kran12
