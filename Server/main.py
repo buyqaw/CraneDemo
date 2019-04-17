@@ -50,8 +50,11 @@ def zeros(path):
     print("Trying to read json")
     data = read_json(path)
 
-    if time.time()*1000 - data[-1][0] > 60:
-        data.append([time.time()*1000, 0])
+    try:
+        if time.time()*1000 - data[-1][0] > 60:
+            data.append([time.time()*1000, 0])
+    except:
+        print("First one")
 
     for i in tqdm(range(len(data) - 1)):
         x = (data[i+1][0]/1000) - (data[i][0]/1000)
@@ -101,7 +104,10 @@ def data():
 
     zeros("./static/json/data.json")
     zeros("./static/json/data1.json")
-
+    try:
+        whois()
+    except:
+        print("No one in kran")
     kran1 = kran11
     kran2 = kran12
 
