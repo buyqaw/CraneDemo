@@ -55,13 +55,13 @@ def dataCome(mac):
 
     if mac[0] == "4":
         ts = time.time()*1000
-        data2write = [ts, mac[1]]
+        data2write = [ts, int(mac[1])]
         data_old = read_json("/home/naboo/CraneDemo/Server/static/json/data.json")
         data_old.append(data2write)
         write_json(data_old, "/home/naboo/CraneDemo/Server/static/json/data.json")
     else:
         ts = time.time()*1000
-        data2write = [ts, mac[1]]
+        data2write = [ts, int(mac[1])]
         data_old = read_json("/home/naboo/CraneDemo/Server/static/json/data1.json")
         data_old.append(data2write)
         write_json(data_old, "/home/naboo/CraneDemo/Server/static/json/data1.json")
