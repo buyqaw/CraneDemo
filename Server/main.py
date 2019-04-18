@@ -29,8 +29,8 @@ def read_json(name):
         return json.load(f)
 
 def whois():
-    data1 = read_json("./static/json/data.json")
-    data2 = read_json("./static/json/data.json")
+    data1 = read_json("/home/naboo/CraneDemo/Server/static/json/data.json")
+    data2 = read_json("/home/naboo/CraneDemo/Server/static/json/data.json")
     kran11 = ""
     kran12 = ""
     if data1[-1][1] == 1:
@@ -73,36 +73,36 @@ def zeros(path):
 
 @app.route("/buynode/<mac>", methods=["GET", "POST"])
 def dataCome(mac):
-    data_show = read_json("./static/json/inside.json")
+    data_show = read_json("/home/naboo/CraneDemo/Server/static/json/inside.json")
     data_show[0] += 1
-    write_json(data_show, "./static/json/inside.json")
+    write_json(data_show, "/home/naboo/CraneDemo/Server/static/json/inside.json")
 
     if mac[0] == "4":
         ts = time.time()*1000
         data2write = [ts, int(mac[1])]
-        data_old = read_json("./static/json/data.json")
+        data_old = read_json("/home/naboo/CraneDemo/Server/static/json/data.json")
         data_old.append(data2write)
-        write_json(data_old, "./static/json/data.json")
+        write_json(data_old, "/home/naboo/CraneDemo/Server/static/json/data.json")
     else:
         ts = time.time()*1000
         data2write = [ts, int(mac[1])]
-        data_old = read_json("./static/json/data1.json")
+        data_old = read_json("/home/naboo/CraneDemo/Server/static/json/data1.json")
         data_old.append(data2write)
-        write_json(data_old, "./static/json/data1.json")
+        write_json(data_old, "/home/naboo/CraneDemo/Server/static/json/data1.json")
     return "200"
 
 
 @app.route("/", methods=["GET", "POST"])
 def data():
-    data_show = read_json("./static/json/inside.json")
+    data_show = read_json("/home/naboo/CraneDemo/Server/static/json/inside.json")
     data_show[1] += 1
-    write_json(data_show, "./static/json/inside.json")
+    write_json(data_show, "/home/naboo/CraneDemo/Server/static/json/inside.json")
 
     enters = data_show[1]
     craneNUM = data_show[0]
 
-    zeros("./static/json/data.json")
-    zeros("./static/json/data1.json")
+    zeros("/home/naboo/CraneDemo/Server/static/json/data.json")
+    zeros("/home/naboo/CraneDemo/Server/static/json/data1.json")
     try:
         kran1, kran2 = whois()
     except:
