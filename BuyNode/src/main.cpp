@@ -14,12 +14,12 @@
 // Display and Scan activities
 SSD1306Wire  display(0x3c, 5, 4);
 BLEScan* pBLEScan = NULL;
-const char* ssid     = "Beeline_EE13";
-const char* password = "00002362";
+const char* ssid     = "Beeline_2B20";
+const char* password = "73154394";
 
 String msg = "0";
 
-String name = "2";
+String name = "1";
 
 int scanTime = 5;
 
@@ -86,7 +86,7 @@ void setup() {
   Serial.begin(115200);
 
   display.init();
-  showit("KRAN 2");
+  showit("KRAN 1");
 
   BLEDevice::init("Node"); // Initialize BLE device
   pBLEScan = BLEDevice::getScan(); //create new scan
