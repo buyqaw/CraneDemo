@@ -214,13 +214,79 @@ $.when(
       </div>
     </div>
   </div>
+  <hr>
+
+  <style>
+    #kran_table {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    #kran_table td, #customers th {
+      border: 1px solid #ddd;
+      padding: 30px;
+      text-align: center; 
+      vertical-align: middle;
+    }
+    
+    #kran_table tr:nth-child(even){background-color: #f2f2f2;}
+    
+    #kran_table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #2196F3;
+      color: white;
+      text-align: center; 
+      vertical-align: middle;
+    }
+    </style>
+
+  <hr>
+  <div id="kran_table_div" style='margin-right: 10px; margin-left: 10px;'>
+    <table id="kran_table" border="1">
+    <tr>
+      <th scope="col"></th>
+      <th scope="col" colspan="2">№1 Крановщик</th>
+      <th scope="col" colspan="2">№2 Крановщик</th>
+    </tr>
+    <tr>
+      <th scope="row">Дата</th>
+      <td>Дневная смена</td>
+      <td>Ночная смена</td>
+      <td>Дневная смена</td>
+      <td>Ночная смена</td>
+    </tr>
+    <tr>
+      <th scope="row">{{ date_day1[1 ]}}</th>
+      <td>{{ day_workhours_str1[0] }}</td>
+      <td>{{ night_workhours_str1[0] }}</td>
+      <td>{{ day_workhours_str2[0] }}</td>
+      <td>{{ night_workhours_str2[0] }}</td>
+    </tr>
+    <tr>
+      <th scope="row">{{ date_day1[1] }}</th>
+      <td>{{ day_workhours_str1[1] }}</td>
+      <td>{{ night_workhours_str1[1] }}</td>
+      <td>{{ day_workhours_str2[1] }}</td>
+      <td>{{ night_workhours_str2[1] }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Среднее время</th>
+      <td>{{ avg_day_worktime1 }}</td>
+      <td>{{ avg_night_worktime1 }}</td>
+      <td>{{ avg_day_worktime2 }}</td>
+      <td>{{ avg_night_worktime2 }}</td>
+    </tr>
+    </table>
+  </div>
 
   <hr>
   <div class="w3-container">
     <div id="container" style="width: 100%; height: 40%; margin: 0 auto"></div>
   </div>
   <hr>
-
 
   <!-- End page content -->
 </div>
